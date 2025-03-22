@@ -5,6 +5,7 @@ from logging import getLogger
 
 import arrow
 from fastapi import APIRouter
+from fastapi import HTTPException
 from fastapi import status
 from sqlmodel import select
 from yarl import URL
@@ -61,7 +62,10 @@ async def shorten_url(session: SessionDep, shorten_url_in: CreateURL) -> UrlsBas
     if url:
         logger.error("URL is existed, can't be duplicated.")
 
-        raise ValueError("URL is existed,  can't be duplicated.")
+        raise HTTPException(
+            status_code=409,
+            detail="URL is existed, can't be duplicated.",
+        )
 
     update: dict = {
         "short_url": generate_url_uuid(shorten_url_in.original_url),

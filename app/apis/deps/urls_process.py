@@ -5,6 +5,8 @@ from typing import Annotated
 
 import arrow
 from fastapi import Depends
+from fastapi import HTTPException
+from fastapi import status
 from sqlmodel import select
 
 from app.apis.deps.session import SessionDep
@@ -19,7 +21,7 @@ def get_current_url(session: SessionDep, url_id: int) -> UrlsBase:
     if not url_obj:
         logger.error("URL is not existed")
 
-        raise ValueError("URL is not existed.")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="URL not found")
 
     return url_obj
 
@@ -33,12 +35,12 @@ def get_short_url(session: SessionDep, *, short_url: str) -> UrlsBase:
     if not url:
         logger.error("URL is not existed")
 
-        raise ValueError("URL is not existed.")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="URL not found")
 
     if url.expiration_date < arrow.utcnow().astimezone(UTC):
         logger.error("URL is expired")
 
-        raise ValueError("URL is expired.")
+        raise HTTPException(status_code=status.HTTP_410_GONE, detail="URL is expired")
 
     return url
 
