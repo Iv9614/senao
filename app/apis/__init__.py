@@ -4,4 +4,4 @@ from app.apis.routes import urls
 
 route = APIRouter()
 
-route.include_router(urls.router, prefix="/urls", tags=["urls"])
+route.include_router(urls.router)

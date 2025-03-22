@@ -1,19 +1,32 @@
 from datetime import datetime
 
 from pydantic import BaseModel
-from pydantic import HttpUrl
 from pydantic import field_validator
 from sqlalchemy_utils.types.arrow import ArrowType
 from sqlmodel import Field
 from sqlmodel import SQLModel
 
 from .common import ArrowPydanticV2
+from .common import DatetimeMixin
+
+
+class URL(SQLModel):
+    original_url: str
+
+
+class GetURLPublic(URL):
+    pass
+
+
+class CreateURLResponse(BaseModel):
+    short_url: str = ""
+    expiration_date: datetime = None
+    success: bool
+    reason: str = None
 
 
 # Input Schema
-class URLRequest(BaseModel):
-    original_url: HttpUrl
-
+class CreateURL(URL):
     @field_validator("original_url", mode="before")
     @classmethod
     def check_length(cls, v: str) -> str:
@@ -24,14 +37,9 @@ class URLRequest(BaseModel):
 
 
 # Output Schema
-class URLResponse(BaseModel):
-    short_url: str = ""
-    expiration_date: datetime = None
-    success: bool
-    reason: str = None
 
 
-class UrlsBase(SQLModel, table=True):
+class UrlsBase(SQLModel, DatetimeMixin, table=True):
     __tablename__ = "urls"
 
     id: int = Field(default=None, primary_key=True)
@@ -40,5 +48,7 @@ class UrlsBase(SQLModel, table=True):
     short_url: str | None = Field(nullable=False, index=True, max_length=2048)
 
     expiration_date: ArrowPydanticV2 | None = Field(nullable=True, sa_type=ArrowType, default=None)
-    created_at: ArrowPydanticV2 | None = Field(nullable=True, sa_type=ArrowType, default=None)
-    updated_at: ArrowPydanticV2 | None = Field(nullable=True, sa_type=ArrowType, default=None)
+
+
+class UpdateUrlSchema(SQLModel):
+    expiration_date: ArrowPydanticV2 | None = Field(nullable=True, sa_type=ArrowType, default=None)
