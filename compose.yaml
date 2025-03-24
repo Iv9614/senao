@@ -14,4 +14,21 @@ services:
       interval: 1s
       timeout: 5s
       retries: 10
- 
+
+  web:
+    build: .
+    # image: jesus28713/senao_example:1.0.0
+    container_name: senao_web
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy  
+    environment:
+      DATABASE__SERVER: db
+      DATABASE__PORT: ${DATABASE__PORT}
+      DATABASE__USER: ${DATABASE__USER}
+      DATABASE__PASSWORD: ${DATABASE__PASSWORD}
+      DATABASE__DATABASE: ${DATABASE__DATABASE}
+
