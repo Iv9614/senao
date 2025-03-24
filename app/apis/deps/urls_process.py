@@ -29,8 +29,8 @@ def get_current_url(session: SessionDep, url_id: int) -> UrlsBase:
 GetCurrentUrl = Annotated[UrlsBase, Depends(get_current_url)]
 
 
-def get_short_url(session: SessionDep, *, short_url: str) -> UrlsBase:
-    url: UrlsBase = session.exec(select(UrlsBase).where(UrlsBase.short_url == short_url)).first()
+def get_short_url(session: SessionDep, *, url_id: int) -> UrlsBase:
+    url: UrlsBase = session.exec(select(UrlsBase).where(UrlsBase.id == url_id)).first()
 
     if not url:
         logger.error("URL is not existed")

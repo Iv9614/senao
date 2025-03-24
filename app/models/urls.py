@@ -15,7 +15,9 @@ class URL(SQLModel):
 
 
 class GetURLPublic(URL):
-    pass
+    id: int
+
+    expiration_date: ArrowPydanticV2 | None = Field(nullable=True, sa_type=ArrowType, default=None)
 
 
 class CreateURLResponse(BaseModel):
@@ -25,7 +27,6 @@ class CreateURLResponse(BaseModel):
     reason: str = None
 
 
-# Input Schema
 class CreateURL(URL):
     @field_validator("original_url", mode="before")
     @classmethod
@@ -34,9 +35,6 @@ class CreateURL(URL):
             raise ValueError("URL is invalid, due to length is too long.")
 
         return v
-
-
-# Output Schema
 
 
 class UrlsBase(SQLModel, DatetimeMixin, table=True):
