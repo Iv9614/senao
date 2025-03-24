@@ -66,6 +66,8 @@ mdurl==0.1.2
     # via markdown-it-py
 multidict==6.2.0
     # via yarl
+orjson==3.10.15
+    # via wisdomgrade (pyproject.toml)
 passlib==1.7.4
     # via wisdomgrade (pyproject.toml)
 propcache==0.3.0
